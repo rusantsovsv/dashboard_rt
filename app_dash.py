@@ -132,7 +132,7 @@ def plot_all_data(df_plot):
         title_x=0.5,
         showlegend=True,
         template="simple_white",
-        height=700
+        height=500
     )
 
     return fig
