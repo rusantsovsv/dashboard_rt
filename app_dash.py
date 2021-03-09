@@ -16,7 +16,7 @@ index_history = pd.read_csv(f'{PATH_TO_CSV}/index_doc_count.csv')
 df_not_upd = pd.read_csv(f'{PATH_TO_CSV}/not_updates_files.csv')
 
 # подгружаем данные по случайным брендам
-df_random_brands = pd.read_csv(f'{PATH_TO_CSV}/random_brands.csv').tail(15)
+df_random_brands = pd.read_csv(f'{PATH_TO_CSV}/random_brands.csv').tail(22)
 
 
 def get_last_value(index_name):
