@@ -1,1 +1,1 @@
-web: gunicorn dashboard-rt:app
+web: gunicorn dashboard-rt:server
