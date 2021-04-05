@@ -9,6 +9,8 @@ PATH_TO_CSV = "csv_dashboard"
 
 app_dash = dash.Dash(__name__, external_stylesheets=[dbc.themes.MATERIA])
 
+server = app_dash.server
+
 # подгружаем данные для построения графиков по индексам
 index_history = pd.read_csv(f'{PATH_TO_CSV}/index_doc_count.csv')
 
