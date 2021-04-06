@@ -16,9 +16,13 @@ index_history = pd.read_csv(f'{PATH_TO_CSV}/index_doc_count.csv')
 
 # подгружаем данные по необновленным историческим данным
 df_not_upd = pd.read_csv(f'{PATH_TO_CSV}/not_updates_files.csv')
+# для кафки
+df_not_upd_kf = pd.read_csv(f'{PATH_TO_CSV}/not_updates_files_kafka.csv')
 
 # подгружаем данные по случайным брендам
 df_random_brands = pd.read_csv(f'{PATH_TO_CSV}/random_brands.csv').tail(22)
+# для кафки
+df_random_brands_kf = pd.read_csv(f'{PATH_TO_CSV}/random_brands_kafka.csv').tail(22)
 
 
 def get_last_value(index_name):
@@ -91,9 +95,9 @@ def plot_all_data(df_plot):
     fig = go.Figure()
 
     # для каждого типа истории добавляем свою кривую
-    colors_lines = ['#ef476f', '#2a9d8f', '#ffd166', '#264653']
+    colors_lines = ['#ef476f', '#2a9d8f', '#ffd166', '#264653', '#0077b6']
 
-    for no, nm in enumerate(['tr_', 'pr_', 'lf_', 'pos_']):
+    for no, nm in enumerate(['tr_', 'pr_', 'lf_', 'pos_', 'tags_']):
         if nm == 'tr_':
             name_leg = 'tradecount_history'
         elif nm == 'pr_':
@@ -102,8 +106,8 @@ def plot_all_data(df_plot):
             name_leg = 'leftovers'
         elif nm == 'pos_':
             name_leg = 'position_in_category'
-        else:
-            name_leg = ''
+        elif nm == 'tags_':
+            name_leg = 'tags'
 
         fig.add_trace(go.Scatter(
             name=name_leg,
@@ -212,7 +216,7 @@ def plot_random_brands(data):
         title_standoff=15,
         tickformat='%d.%m.%y')
 
-    fig.update_layout(title_text=f"Проценты отсутствующих товаров в Elasticsearch\n(случайная выборка из брендов) ",
+    fig.update_layout(title_text=f"Проценты отсутствующих товаров в Elasticsearch<br>(случайная выборка из брендов) ",
                       title_x=0.5,
                       showlegend=False,
                       template="simple_white")
@@ -251,6 +255,22 @@ wb_items_2_not_upd = dbc.Card(
 # добавляем график для брендов
 wb_items_2_random_brands = dbc.Card(
     dcc.Graph(id='rand_brand', figure=plot_random_brands(df_random_brands), config={'displayModeBar': False}),
+    style={'padding-left': '0px', 'box-shadow': 'none'})
+
+# первая карточка - количество записей в индексе wb_items
+wb_items_kafka = generate_card('wb_items_kafka')
+
+# добавляем график
+wb_items_kafka_graph = generate_plot('wb_items_kafka')
+
+# добавляем график не обновленных
+wb_items_kafka_not_upd = dbc.Card(
+    dcc.Graph(id='not_upd_kf', figure=plot_all_data(df_not_upd_kf), config={'displayModeBar': False}),
+    style={'padding-left': '0px', 'box-shadow': 'none'})
+
+# добавляем график для брендов
+wb_items_kafka_random_brands = dbc.Card(
+    dcc.Graph(id='rand_brand_kf', figure=plot_random_brands(df_random_brands_kf), config={'displayModeBar': False}),
     style={'padding-left': '0px', 'box-shadow': 'none'})
 
 # вторая карточка - количество записей в индексе wb_brands
@@ -296,6 +316,16 @@ app_dash.layout = html.Div([
         dbc.Col(wb_items_2_random_brands, width={"size": 6}, style=style_graph),
     ], no_gutters=True),
     dbc.Row([dbc.Col(wb_items_2_not_upd, width={"size": 10, "offset": 1},
+                style=style_graph)
+
+    ], no_gutters=True),
+    dbc.Row([
+        dbc.Col(wb_items_kafka, width=width, style=style),
+        dbc.Col(wb_items_kafka_graph, width=4,
+                style=style_graph),
+        dbc.Col(wb_items_kafka_random_brands, width={"size": 6}, style=style_graph),
+    ], no_gutters=True),
+    dbc.Row([dbc.Col(wb_items_kafka_not_upd, width={"size": 10, "offset": 1},
                 style=style_graph)
 
     ], no_gutters=True),
