@@ -242,18 +242,18 @@ def generate_plot(index_name):
 
 
 # первая карточка - количество записей в индексе wb_items
-wb_items_2 = generate_card('wb_items_2')
+wb_items = generate_card('wb_items')
 
 # добавляем график
-wb_items_2_graph = generate_plot('wb_items_2')
+wb_items_graph = generate_plot('wb_items')
 
 # добавляем график не обновленных
-wb_items_2_not_upd = dbc.Card(
+wb_items_not_upd = dbc.Card(
     dcc.Graph(id='not_upd', figure=plot_all_data(df_not_upd), config={'displayModeBar': False}),
     style={'padding-left': '0px', 'box-shadow': 'none'})
 
 # добавляем график для брендов
-wb_items_2_random_brands = dbc.Card(
+wb_items_random_brands = dbc.Card(
     dcc.Graph(id='rand_brand', figure=plot_random_brands(df_random_brands), config={'displayModeBar': False}),
     style={'padding-left': '0px', 'box-shadow': 'none'})
 
@@ -310,12 +310,12 @@ app_dash.layout = html.Div([
                                     'padding-top': "30px"
                                     })])),
     dbc.Row([
-        dbc.Col(wb_items_2, width=width, style=style),
-        dbc.Col(wb_items_2_graph, width=4,
+        dbc.Col(wb_items, width=width, style=style),
+        dbc.Col(wb_items_graph, width=4,
                 style=style_graph),
-        dbc.Col(wb_items_2_random_brands, width={"size": 6}, style=style_graph),
+        dbc.Col(wb_items_random_brands, width={"size": 6}, style=style_graph),
     ], no_gutters=True),
-    dbc.Row([dbc.Col(wb_items_2_not_upd, width={"size": 10, "offset": 1},
+    dbc.Row([dbc.Col(wb_items_not_upd, width={"size": 10, "offset": 1},
                 style=style_graph)
 
     ], no_gutters=True),
