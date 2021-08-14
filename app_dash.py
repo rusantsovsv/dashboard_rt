@@ -16,32 +16,37 @@ index_history = pd.read_csv(f'{PATH_TO_CSV}/index_doc_count.csv')
 
 # подгружаем данные по необновленным историческим данным
 df_not_upd = pd.read_csv(f'{PATH_TO_CSV}/not_updates_files.csv')
-# для кафки
-df_not_upd_kf = pd.read_csv(f'{PATH_TO_CSV}/not_updates_files_kafka.csv')
 
 # подгружаем данные по случайным брендам
 df_random_brands = pd.read_csv(f'{PATH_TO_CSV}/random_brands.csv').tail(22)
-# для кафки
-df_random_brands_kf = pd.read_csv(f'{PATH_TO_CSV}/random_brands_kafka.csv').tail(22)
 
 
 def get_last_value(index_name):
+
     """
     Функция возвращает актуальное количество записей в нужном индексе
 
-    :param index_name(str): имя индекса Elasticsearch
-    :return (int): актуальное количество записей
+    Args:
+        index_name(str): имя индекса Elasticsearch.
+
+    Returns:
+        int: актуальное количество записей.
     """
+
     return index_history[index_history['es_index'] == index_name].tail(1)['count_docs'].values[0]
 
 
 def generate_card(index_name):
+
     """
     Функция для генерации карточки с наименованием индекса и количеством записей в нем
 
-    :param index_name(str): название индекса
-    :return: dbc.Card
+    Args:
+        index_name(str): название индекса.
+    Returns:
+        dbc.Card: сгенерированная карточка.
     """
+
     card = dbc.Card([
         dbc.CardHeader(index_name, style={'text-align': 'center',
                                           'text-transform': 'uppercase'}),
@@ -61,9 +66,17 @@ def generate_card(index_name):
 
 
 def plot_line(index_history, index_name):
+
     """
     Функция получает датафрейм и имя индекса, возвращает график
+
+    Args:
+        index_history (pandas.DataFrame): история изменений индекса.
+
+    Returns:
+        plotly.graph_objects.Figure: график изменения записей в индексе
     """
+
     # выбираем все данные для построения графика
     dff = index_history[index_history['es_index'] == index_name]
 
@@ -85,9 +98,17 @@ def plot_line(index_history, index_name):
 
 
 def plot_all_data(df_plot):
+
     """
     График для отображения процентов не обновленных историй
+
+    Args:
+        df_plot (pandas.DataFrame): исходный датафрейм с историями для вывода на график.
+
+    Returns:
+        plotly.graph_objects.Figure: график с процентами необновленных историй.
     """
+
     # сортируем датафрейм по дате
     data = df_plot.sort_values(by='date').tail(60)
 
@@ -145,8 +166,16 @@ def plot_all_data(df_plot):
 
 
 def plot_random_brands(data):
-    # print(data)
-    # print()
+
+    """
+    График процента отсутствующих товаров из случайных брендов
+
+    Args:
+        data (pandas.DataFrame): датафрейм с данными по отсутствующим товарам.
+
+    Returns:
+        plotly.graph_objects.Figure: график с процентом отсутствующих товаров.
+    """
 
     fig = go.Figure()
 
@@ -226,14 +255,18 @@ def plot_random_brands(data):
     return fig
 
 
-
 def generate_plot(index_name):
+
     """
     Функция для генерации карточки с графиком динамики изменения количества записей в индексе
 
-    :param index_name(str): название индекса
-    :return: dbc.Card
+    Args:
+        index_name(str): название индекса
+
+    Returns:
+        dbc.Card: карточка с графиком.
     """
+
     card = dbc.Card(
         dcc.Graph(id=f'{index_name}_line', figure=plot_line(index_history, index_name),
                   config={'displayModeBar': False}),
@@ -255,22 +288,6 @@ wb_items_not_upd = dbc.Card(
 # добавляем график для брендов
 wb_items_random_brands = dbc.Card(
     dcc.Graph(id='rand_brand', figure=plot_random_brands(df_random_brands), config={'displayModeBar': False}),
-    style={'padding-left': '0px', 'box-shadow': 'none'})
-
-# первая карточка - количество записей в индексе wb_items
-wb_items_kafka = generate_card('wb_items_kafka')
-
-# добавляем график
-wb_items_kafka_graph = generate_plot('wb_items_kafka')
-
-# добавляем график не обновленных
-wb_items_kafka_not_upd = dbc.Card(
-    dcc.Graph(id='not_upd_kf', figure=plot_all_data(df_not_upd_kf), config={'displayModeBar': False}),
-    style={'padding-left': '0px', 'box-shadow': 'none'})
-
-# добавляем график для брендов
-wb_items_kafka_random_brands = dbc.Card(
-    dcc.Graph(id='rand_brand_kf', figure=plot_random_brands(df_random_brands_kf), config={'displayModeBar': False}),
     style={'padding-left': '0px', 'box-shadow': 'none'})
 
 # вторая карточка - количество записей в индексе wb_brands
@@ -316,16 +333,6 @@ app_dash.layout = html.Div([
         dbc.Col(wb_items_random_brands, width={"size": 6}, style=style_graph),
     ], no_gutters=True),
     dbc.Row([dbc.Col(wb_items_not_upd, width={"size": 10, "offset": 1},
-                style=style_graph)
-
-    ], no_gutters=True),
-    dbc.Row([
-        dbc.Col(wb_items_kafka, width=width, style=style),
-        dbc.Col(wb_items_kafka_graph, width=4,
-                style=style_graph),
-        dbc.Col(wb_items_kafka_random_brands, width={"size": 6}, style=style_graph),
-    ], no_gutters=True),
-    dbc.Row([dbc.Col(wb_items_kafka_not_upd, width={"size": 10, "offset": 1},
                 style=style_graph)
 
     ], no_gutters=True),
