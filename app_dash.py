@@ -15,7 +15,7 @@ server = app_dash.server
 index_history = pd.read_csv(f'{PATH_TO_CSV}/index_doc_count.csv')
 
 # подгружаем данные по необновленным историческим данным
-df_not_upd = pd.read_csv(f'{PATH_TO_CSV}/not_updates_files.csv')
+df_not_upd = pd.read_csv(f'{PATH_TO_CSV}/not_updates_files.csv')[:405]
 
 # подгружаем данные по случайным брендам
 df_random_brands = pd.read_csv(f'{PATH_TO_CSV}/random_brands.csv').tail(22)
